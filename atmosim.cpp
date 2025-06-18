@@ -147,6 +147,27 @@ string list_gases() {
     return out;
 }
 
+bool is_gas(const string& gas) {
+    return gas_map.count(gas) > 0;
+}
+
+// string-to-gas
+gas_type to_gas(const string& gas) {
+    if (!is_gas(gas)) {
+        return invalid_gas;
+    }
+    return gas_map[gas];
+}
+
+// string-to-gas but throw an exception if invalid
+gas_type parse_gas(const string& gas) {
+    gas_type out = to_gas(gas);
+    if (out.invalid()) {
+        throw invalid_argument("Parsed invalid gas type.");
+    }
+    return out;
+}
+
 vector<gas_type> parse_gas_list(const string& s) {
     vector<gas_type> gases;
     if (s.empty()) return gases;
@@ -243,7 +264,7 @@ string list_params() {
 }
 
 dyn_val get_param(const string& name) {
-    if (sim_params.contains(name)) {
+    if (sim_params.count(name) > 0) {
         return sim_params[name];
     }
     return sim_params[""];
@@ -319,26 +340,6 @@ void reset() {
     leaked_heat = 0.0;
 }
 
-bool is_gas(const string& gas) {
-    return gas_map.contains(gas);
-}
-
-// string-to-gas
-gas_type to_gas(const string& gas) {
-    if (!is_gas(gas)) {
-        return invalid_gas;
-    }
-    return gas_map[gas];
-}
-
-// string-to-gas but throw an exception if invalid
-gas_type parse_gas(const string& gas) {
-    gas_type out = to_gas(gas);
-    if (out.invalid()) {
-        throw invalid_argument("Parsed invalid gas type.");
-    }
-    return out;
-}
 
 istream& operator>>(istream& stream, gas_type& g) {
     string val;
